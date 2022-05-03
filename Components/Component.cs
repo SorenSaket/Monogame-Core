@@ -9,9 +9,14 @@ namespace Core.Components
 	public class Component
 	{
 		public bool Active { get; set; } = true;
-		protected GameObject gameobject;
-		protected Game game;
-		protected Scene scene;
+		private GameObject gameobject;
+		private Game game;
+		private Scene scene;
+
+		protected Game Game => game;
+		protected GameObject Gameobject => gameobject;
+		protected Scene Scene => scene;
+
 
 		#region Lifetime
 		/// <summary>
