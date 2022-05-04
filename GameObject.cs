@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -129,9 +130,19 @@ namespace Core
 			if(!component.IsSubclassOf( typeof(Component)))
 				throw new Exception("Type is not IsSubclassOf component");
 
-			
 
+			
 			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(component.GetType());
+
+			if(attrs.OfType<DisallowMultipleComponent>().Any())
+			{
+				if (GetComponent(component) != null)
+				{
+					return null;
+				}
+			}
+
+
 			for (int i = 0; i < attrs.Length; i++)
 			{
 				if (attrs[i] is RequireComponent requireComponent )
@@ -142,6 +153,8 @@ namespace Core
 					if (GetComponent(comp) == null)
 						AddComponent(comp);
 				}
+					
+				
 			}
 			components.Add((Component)Activator.CreateInstance(component));
 			components[^1].DoAwake(this, game, scene);
@@ -149,8 +162,17 @@ namespace Core
 			return (Component)components[^1];
 		}
 		public T AddComponent<T>() where T : Component, new()
-        {
+		{
 			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(typeof(T));
+
+			if (attrs.OfType<DisallowMultipleComponent>().Any())
+			{
+				if (GetComponent<T>() != null)
+				{
+					return null;
+				}
+			}
+			
 			for (int i = 0; i < attrs.Length; i++)
 			{
 				if (attrs[i] is RequireComponent requireComponent)
