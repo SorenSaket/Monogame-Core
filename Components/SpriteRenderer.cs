@@ -51,6 +51,9 @@ namespace Core.Components
         protected override void Awake()
         {
 			transform = GetComponent<Transform>();
+			Sprite = TextureHelper.SingleWhite;
+			RenderSettings = new SheetRenderSettings(TextureHelper.SingleWhite);
+			Scale = new Vector2(64,64);
 
 		}
 

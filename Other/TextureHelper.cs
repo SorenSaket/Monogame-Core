@@ -19,6 +19,11 @@ namespace Core
 			return new Vector2(texture.Width / 2f, texture.Height / 2f);
 		}
 
+		
+
+
+		public static Texture2D SingleWhite { get; set; }
+
 		public static Texture2D Single(GraphicsDevice graphicsDevice, Color color)
 		{
 			Texture2D oneByOne = new Texture2D(graphicsDevice, 1, 1);
