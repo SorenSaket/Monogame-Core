@@ -126,42 +126,41 @@ namespace Core
 		{
 			if (component == null)
 				return null;
-			if(!component.IsAssignableFrom( typeof(Component)))
-				throw new Exception("Type is not assignable from component");
+			if(!component.IsSubclassOf( typeof(Component)))
+				throw new Exception("Type is not IsSubclassOf component");
 
-			components.Add((Component)Activator.CreateInstance(component));
+			
 
 			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(component.GetType());
 			for (int i = 0; i < attrs.Length; i++)
 			{
-				if (attrs[i] is RequireComponent)
+				if (attrs[i] is RequireComponent requireComponent )
 				{
-					Type comp = ((RequireComponent)attrs[i]).RequiedComponent;
+					Type comp = requireComponent.RequiedComponent;
 					if (comp == null)
 						continue;
 					if (GetComponent(comp) == null)
 						AddComponent(comp);
 				}
 			}
+			components.Add((Component)Activator.CreateInstance(component));
 			components[^1].DoAwake(this, game, scene);
 			components[^1].DoStart();
 			return (Component)components[^1];
 		}
 		public T AddComponent<T>() where T : Component, new()
         {
-			components.Add(new T());
-
 			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(typeof(T));
 			for (int i = 0; i < attrs.Length; i++)
 			{
-				if (attrs[i] is RequireComponent)
+				if (attrs[i] is RequireComponent requireComponent)
 				{
-					Type comp = ((RequireComponent)attrs[i]).RequiedComponent;
+					Type comp = requireComponent.RequiedComponent;
 					if (GetComponent(comp) == null)
 						AddComponent(comp);
 				}
 			}
-
+			components.Add(new T());
 			components[^1].DoAwake(this, game, scene);
 			components[^1].DoStart();
 			return (T)components[^1];

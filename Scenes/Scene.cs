@@ -20,7 +20,7 @@ namespace Core
 		public Color Background { get => background; set => background = value; }
 		protected Game Game { get => game; }
 		/// <summary> A list of all the objects in the scene </summary>
-		public List<GameObject> Objects => gameObjects;
+		public List<GameObject> Gameobjects => gameObjects;
 
 
 		public void Load(Game game)
@@ -145,8 +145,8 @@ namespace Core
 
 		public void DrawDebug(SpriteBatch spriteBatch, SpriteFont font)
 		{
-			int count = Objects.Count;
-			int active = Objects.Count((x) => x.Active);
+			int count = Gameobjects.Count;
+			int active = Gameobjects.Count((x) => x.Active);
 			int inactive = count - active;
 
 

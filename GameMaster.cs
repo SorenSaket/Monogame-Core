@@ -48,7 +48,7 @@ namespace FactoryDefense
 				Exit();
 
 			sceneManager.Update();
-			// TODO: Add your update logic here
+			Time.Update(gameTime);
 
 			base.Update(gameTime);
 		}

@@ -11,8 +11,11 @@ namespace Core.Components
 
 		public RequireComponent(Type component)
 		{
-			if(component == typeof(Component))
+			if (component.IsSubclassOf(typeof(Component)))
 				this.RequiedComponent = component;
+			else
+				throw new Exception("Type is not IsSubclassOf component");
 		}
+
 	}
 }

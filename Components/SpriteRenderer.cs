@@ -17,20 +17,13 @@ namespace Core.Components
 		{
 			set
 			{
-				Scale = new Vector2(value/ Sprites[0].Width);
+				Scale = new Vector2(value/Sprite.Width);
 			}
 		}
-
+		public SheetRenderSettings RenderSettings { get; set; }
 		/// <summary> Set single Texture </summary>
-		public Texture2D Texture
-		{
-			set
-			{
-				Sprites = new Texture2D[] { value };
-			}
-		}
+		public Texture2D Sprite { get; set; }
 
-		public Texture2D[] Sprites { get; set; }
 		public Vector2 Origin { get; set; }
 		public float AnimationSpeed { get; set; } = 1;
 		public float Rotation { get; set; } = 0;
@@ -41,11 +34,16 @@ namespace Core.Components
 
 		private Transform transform;
 
+		public SpriteRenderer()
+		{
+			
+		}
+
 		/// <summary> Center the <see cref="Origin"></see> to the first sprite in the <see cref="Sprites"></see> array </summary>
 		public void CenterOrigin()
 		{
-			if(Sprites != null && Sprites.Length > 0)
-				Origin = Sprites[0].Center();
+			if(Sprite != null)
+				Origin = Sprite.Center();
 		}
 
 
@@ -59,7 +57,7 @@ namespace Core.Components
 
         protected override void Draw(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(Sprites[(int)(Time.TotalTime * AnimationSpeed) % Sprites.Length], transform.Position, null, Color, Rotation, Origin, Scale, SpriteEffects, Layer);
+			spriteBatch.Draw(Sprite, transform.Position, RenderSettings.Frames[(int)(Time.TotalTime * AnimationSpeed) % RenderSettings.Frames.Length], Color, Rotation, Origin, Scale, SpriteEffects, Layer);
 		}
 	}
 }
