@@ -18,6 +18,8 @@ namespace Core
 	/// Size: 4+4+64+64 : 136 bits
 	public class GameObject : ICloneable
 	{
+		public event Action<Component> OnComponentAdded;
+
 		#region Variables
 		/// <summary>
 		/// Returns true if the object is active and not destroyed
@@ -120,7 +122,6 @@ namespace Core
 		protected virtual void Draw(SpriteBatch spriteBatch) { }
 		#endregion
 
-
 		#region Components
 		// Non generic and generic implementations 
 		public Component AddComponent(Type component)
@@ -130,8 +131,6 @@ namespace Core
 			if(!component.IsSubclassOf( typeof(Component)))
 				throw new Exception("Type is not IsSubclassOf component");
 
-
-			
 			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(component.GetType());
 
 			if(attrs.OfType<DisallowMultipleComponent>().Any())
@@ -156,10 +155,13 @@ namespace Core
 					
 				
 			}
-			components.Add((Component)Activator.CreateInstance(component));
-			components[^1].DoAwake(this, game, scene);
-			components[^1].DoStart();
-			return (Component)components[^1];
+
+			Component componentToAdd = (Component)Activator.CreateInstance(component);
+			components.Add(componentToAdd);
+			componentToAdd.DoAwake(this, game, scene);
+			componentToAdd.DoStart();
+			OnComponentAdded?.Invoke(componentToAdd);
+			return componentToAdd;
 		}
 		public T AddComponent<T>() where T : Component, new()
 		{
@@ -182,10 +184,13 @@ namespace Core
 						AddComponent(comp);
 				}
 			}
-			components.Add(new T());
-			components[^1].DoAwake(this, game, scene);
-			components[^1].DoStart();
-			return (T)components[^1];
+
+			T componentToAdd = new T();
+			components.Add(componentToAdd);
+			componentToAdd.DoAwake(this, game, scene);
+			componentToAdd.DoStart();
+			OnComponentAdded?.Invoke(componentToAdd);
+			return componentToAdd;
 		}
 
 		public Component GetComponent(Type component)
