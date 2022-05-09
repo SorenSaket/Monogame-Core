@@ -34,6 +34,8 @@ namespace Core.Components
 
 		private Transform transform;
 
+
+		private int elementIndex = 0;
 		public SpriteRenderer()
 		{
 			
@@ -57,10 +59,16 @@ namespace Core.Components
 
 		}
 
+        protected override void Update()
+        {
+			if (RenderSettings.AnimationType == SheetAnimationType.Anim)
+				elementIndex = ((int)((Time.TotalTime * AnimationSpeed) % RenderSettings.Frames.Length));
+
+		}
 
         protected override void Draw(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(Sprite, transform.Position, RenderSettings.Frames[(int)(Time.TotalTime * AnimationSpeed) % RenderSettings.Frames.Length], Color, Rotation, Origin, Scale, SpriteEffects, Layer);
+			spriteBatch.Draw(Sprite, transform.Position, RenderSettings.Frames[elementIndex], Color, Rotation, Origin, Scale, SpriteEffects, Layer);
 		}
 	}
 }
