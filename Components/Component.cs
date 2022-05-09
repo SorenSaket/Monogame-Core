@@ -62,7 +62,9 @@ namespace Core.Components
 		public Component AddComponent(Type component) => Gameobject.GetComponent(component);
 		public T AddComponent<T>() where T : Component, new() => Gameobject.AddComponent<T>();
 		public Component GetComponent(Type component) => Gameobject.GetComponent(component);
-		public T GetComponent<T>() where T : Component => Gameobject.GetComponent<T>();
+		public T GetComponent<T>() => Gameobject.GetComponent<T>();
+
+		public bool TryGetComponent<T>(out T component) => Gameobject.TryGetComponent(out component); 
 		#endregion
 	}
 }

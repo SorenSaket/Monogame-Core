@@ -8,7 +8,7 @@ namespace Core.Physics
 	{
 		public List<Collider2D> collidables;
 
-		public PhysicsWorld()
+		protected override void Awake()
 		{
 			collidables = new List<Collider2D>();
 			Scene.OnGameObjectInstantiated += (o) => { o.OnComponentAdded += (c) => {

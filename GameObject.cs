@@ -220,15 +220,21 @@ namespace Core
 			}
 			return null;
 		}
-		public T GetComponent<T>() where T : Component
+		public T GetComponent<T>()
 		{
             for (int i = 0; i < components.Count; i++)
             {
 				if (components[i] is T r)
 					return r;
             }
-			return null;
+			return default(T);
 		}
+
+		public bool TryGetComponent<T>(out T a)
+        {
+			a = GetComponent<T>();
+			return a == null;
+        }
 
 		#endregion
 
