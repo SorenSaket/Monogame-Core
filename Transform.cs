@@ -9,6 +9,8 @@ namespace Core.Components
 	{
 		public Vector2 Position { get; set; }
 		public Vector2 Scale	{ get; set; }
-		public float Rotation	{ get; set ; }
+		public float Rotation	{ get; set; }
+
+		//public bool HasChanged { get; private set; }
 	}
 }

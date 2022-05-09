@@ -120,6 +120,10 @@ namespace Core
 		{
 			for (int i = 0; i < gameObjects.Count; i++)
 			{
+				gameObjects[i].DoEarlyUpdate();
+			}
+			for (int i = 0; i < gameObjects.Count; i++)
+			{
 				gameObjects[i].DoUpdate();
 			}
 			for (int i = 0; i < gameObjects.Count; i++)

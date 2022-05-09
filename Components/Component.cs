@@ -8,7 +8,8 @@ namespace Core.Components
 {
 	public class Component
 	{
-		public bool Active { get; set; } = true;
+		public bool ActiveSelf { get; set; } = true;
+		public bool Active => ActiveSelf && Gameobject.Active;
 
 		public Game Game { get; private set;}
 		public GameObject Gameobject { get; private set; }
@@ -35,17 +36,20 @@ namespace Core.Components
 		public void DoStart() { Start(); }
 		protected virtual void Start() { }
 
-		public void DoUpdate() { if (Active && Gameobject.Active) Update(); }
+		public void DoEarlyUpdate() { if (Active) EarlyUpdate(); }
+		protected virtual void EarlyUpdate() { }
+
+		public void DoUpdate() { if (Active) Update(); }
 		/// <summary>
 		/// Called every frame. Will not be called if object is inactive
 		/// </summary>
 		protected virtual void Update() { }
 
 
-		public void DoLateUpdate() { if (Active && Gameobject.Active) LateUpdate(); }
+		public void DoLateUpdate() { if (Active) LateUpdate(); }
 		protected virtual void LateUpdate() { }
 
-		public void DoDraw(SpriteBatch spriteBatch) { if (Active && Gameobject.Active) Draw(spriteBatch); }
+		public void DoDraw(SpriteBatch spriteBatch) { if (Active) Draw(spriteBatch); }
 		/// <summary>
 		/// Called every draw call. Will not be called if object is inactive
 		/// </summary>

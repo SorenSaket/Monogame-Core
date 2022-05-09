@@ -4,37 +4,48 @@ using Microsoft.Xna.Framework;
 
 namespace Core.Physics
 {
-	public class PhysicsWorld 
+	public class PhysicsWorld : GameObject
 	{
-		private Scene scene;
-
 		public List<Collider2D> collidables;
 
-		public PhysicsWorld(Scene scene)
+		public PhysicsWorld()
 		{
-			this.scene = scene;
 			collidables = new List<Collider2D>();
-			scene.OnGameObjectInstantiated += (o) => { o.OnComponentAdded += (c) => {
+			Scene.OnGameObjectInstantiated += (o) => { o.OnComponentAdded += (c) => {
 				// On New Component Added
 				if (c is Collider2D collider)
 				{
 					collidables.Add(collider);
+					collider.PhysicsWorld = this;
 				}
 			};};
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public List<Collider2D> OverlapPointAll(Vector2 point)
+
+        protected override void Update()
+        {
+            for (int i = 0; i < collidables.Count; i++)
+            {
+				var collisions = OverlapAll(collidables[i]);
+                for (int y = 0; y < collisions.Count; y++)
+                {
+					collidables[i].OnCollision.Invoke((collisions[y]));
+				}
+			}
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public List<Collider2D> OverlapPointAll(Vector2 point)
 		{
 			List<Collider2D> c = new List<Collider2D>();
 
 			for (int i = 0; i < collidables.Count; i++)
 			{
-				if (!collidables[i].Gameobject.Active)
+				if (!collidables[i].Active)
 					continue;
 
 				if (collidables[i].Shape.Contains(point))
@@ -46,7 +57,7 @@ namespace Core.Physics
 		{
 			for (int i = 0; i < collidables.Count; i++)
 			{
-				if (!collidables[i].Gameobject.Active)
+				if (!collidables[i].Active)
 					continue;
 
 				if (collidables[i].Shape.Contains(point))
@@ -54,11 +65,11 @@ namespace Core.Physics
 			}
 			return null;
 		}
-		public bool IsOverlapPoint(Vector2 point, out ICollidable collidable)
+		public bool IsOverlapPoint(Vector2 point, out Collider2D collidable)
 		{
 			for (int i = 0; i < collidables.Count; i++)
 			{
-				if (!collidables[i].Gameobject.Active)
+				if (!collidables[i].Active)
 					continue;
 				if (collidables[i].Shape.Contains(point))
 				{
@@ -86,106 +97,30 @@ namespace Core.Physics
 			return false;
 		}
 
-
-		public ICollidable[] OverlapAll(ICollidable colliable)
+		public List<Collider2D> OverlapAll(Collider2D collider)
 		{
-			List<ICollidable> c = new List<ICollidable>();
+			List<Collider2D> c = new List<Collider2D>();
 
 			for (int i = 0; i < collidables.Count; i++)
 			{
-				if (collidables[i] == colliable)
+				if (!collidables[i].Active)
 					continue;
-				if (collidables[i].Shape.Intersects(colliable.Shape))
+				if (collidables[i] == collider)
+					continue;
+				if (Collision.Intersects(collider, collidables[i]))
 					c.Add(collidables[i]);
 			}
-			return c.ToArray();
+			return c;
 		}
-		public ICollidable Overlap(ICollidable colliable)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i] == colliable)
-					continue;
-				if (collidables[i].Shape.Intersects(colliable.Shape))
-					return collidables[i];
-			}
-			return null;
-		}
-		public bool IsOverlap(ICollidable colliable, out ICollidable other)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i] == colliable)
-					continue;
-				if (collidables[i].Shape.Intersects(colliable.Shape))
-				{
-					other = collidables[i];
-					return true;
-				}
-			}
-			other = null;
-			return false;
-		}
-		public bool IsOverlap(ICollidable colliable)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i] == colliable)
-					continue;
-				if (collidables[i].Shape.Intersects(colliable.Shape))
-					return true;
-			}
-			return false;
-		}
-		
-		public ICollidable[] OverlapAll(Shape shape)
-		{
-			List<ICollidable> c = new List<ICollidable>();
-
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i].Shape.Intersects(shape))
-					c.Add(collidables[i]);
-			}
-			return c.ToArray();
-		}
-		public ICollidable Overlap(Shape shape)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i].Shape.Intersects(shape))
-					return collidables[i];
-			}
-			return null;
-		}
-		public bool IsOverlap(Shape shape, out ICollidable other)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i].Shape.Intersects(shape))
-				{
-					other = collidables[i];
-					return true;
-				}
-			}
-			other = null;
-			return false;
-		}
-		public bool IsOverlap(Shape shape)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i].Shape.Intersects(shape))
-					return true;
-			}
-			return false;
-		}
-
-		
 	}
 
-	public static class Physics
+	public static class Collision
 	{
+		public static bool Intersects(this Collider2D self, Collider2D other)
+		{
+			return self.Shape.Intersects(other.Shape);
+		}
+
 		public static bool Intersects(this Shape self, Shape other)
 		{
 			if (self is Circle selfCircle)

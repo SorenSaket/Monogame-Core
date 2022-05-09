@@ -74,6 +74,22 @@ namespace Core
 		}
 		protected virtual void Start() { }
 
+		public void DoEarlyUpdate()
+		{
+			if (!Active)
+				return;
+
+			EarlyUpdate();
+			for (int i = 0; i < components.Count; i++)
+			{
+				components[i].DoEarlyUpdate();
+			}
+		}
+		/// <summary>
+		/// Called every frame. Will not be called if object is inactive
+		/// </summary>
+		protected virtual void EarlyUpdate() { }
+
 		public void DoUpdate() {
 			if (!Active)
 				return;
@@ -83,7 +99,6 @@ namespace Core
 			{
 				components[i].DoUpdate();
 			}
-
 		}
 		/// <summary>
 		/// Called every frame. Will not be called if object is inactive
