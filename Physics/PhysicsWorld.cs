@@ -29,7 +29,7 @@ namespace Core.Physics
 				var collisions = OverlapAll(collidables[i]);
                 for (int y = 0; y < collisions.Count; y++)
                 {
-					collidables[i].OnCollision.Invoke((collisions[y]));
+					collidables[i].OnCollision?.Invoke((collisions[y]));
 				}
 			}
         }
