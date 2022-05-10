@@ -6,6 +6,11 @@ using System.Collections.Generic;
 using System.Text;
 namespace Core.Components
 {
+	public enum AnimationType
+	{
+		None,
+		Anim
+	}
 	/// <summary>
 	/// Simple Helper to draw sprites and sprite animations
 	/// </summary>
@@ -20,35 +25,51 @@ namespace Core.Components
 				Scale = new Vector2(value/Sprite.Width);
 			}
 		}
-		public SheetRenderSettings RenderSettings { get; set; }
-		/// <summary> Set single Texture </summary>
+
+		/// <summary> Sprite </summary>
 		public Texture2D Sprite { get; set; }
-
-		public Vector2 Origin { get; set; }
-		public float AnimationSpeed { get; set; } = 1;
-		public float Rotation { get; set; } = 0;
+		/// <summary> Sheet Settings for using Spritesheets </summary>
+		public SpriteSheet SheetSettings { get; set; }
+		/// <summary> Color tint of sprite </summary>
 		public Color Color { get; set; } = Color.White;
-		public SpriteEffects SpriteEffects { get; set; } = SpriteEffects.None;
-		public float Layer { get; set; } = 0.5f;
-		public Vector2 Scale { get; set; } = Vector2.One;
+		/// <summary> Origin of the sprite relative to transform</summary>
+		public float Rotation { get; set; } = 0;
+		/// <summary> Origin of the sprite </summary>
+		public Vector2 Origin { get; set; }
 
+
+		/// <summary> Scale of the Sprite </summary>
+		public Vector2 Scale { get; set; } = Vector2.One;
+		/// <summary> Scale of the Sprite </summary>
+		public SpriteEffects SpriteEffects { get; set; } = SpriteEffects.None;
+		/// <summary> Scale of the Sprite </summary>
+		public float Layer { get; set; } = 0.5f;
+
+		/// <summary> The type of animation to be played </summary>
+		public AnimationType AnimationType { get; set; } = AnimationType.None;
+		/// <summary> Frames per Second </summary>
+		public float AnimationSpeed { get; set; } = 1f;
+		/// <summary> Current Sprite Sheet Element</summary>
+		public int ElementIndex { get; set; } = 0;
+		
 		private Transform transform;
 
 
-		private int elementIndex = 0;
+
+
 		public SpriteRenderer()
 		{
 			
 		}
 
-		/// <summary> Center the <see cref="Origin"></see> to the first sprite in the <see cref="Sprites"></see> array </summary>
+		/// <summary> Center the Origin</summary>
 		public void CenterOrigin()
 		{
 			if(Sprite != null)
             {
-				if(RenderSettings != null)
+				if(SheetSettings != null)
                 {
-					Origin = RenderSettings.Origin;
+					Origin = SheetSettings.Origin;
                 }
                 else
 				{
@@ -61,21 +82,19 @@ namespace Core.Components
         {
 			transform = GetComponent<Transform>();
 			Sprite = TextureHelper.SingleWhite;
-			RenderSettings = new SheetRenderSettings(TextureHelper.SingleWhite);
-			Scale = new Vector2(64,64);
-
+			SheetSettings = new SpriteSheet(TextureHelper.White64x);
 		}
 
         protected override void Update()
         {
-			if (RenderSettings.AnimationType == SheetAnimationType.Anim)
-				elementIndex = ((int)((Time.TotalTime * AnimationSpeed) % RenderSettings.Frames.Length));
-
+			// Animate
+			if (AnimationType == AnimationType.Anim)
+				ElementIndex = ((int)((Time.TotalTime * AnimationSpeed) % SheetSettings.Frames.Length));
 		}
 
         protected override void Draw(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(Sprite, transform.Position, RenderSettings.Frames[elementIndex], Color, Rotation, Origin, Scale, SpriteEffects, Layer);
+			spriteBatch.Draw(Sprite, transform.Position, SheetSettings.Frames[ElementIndex], Color, transform.Rotation + Rotation, Origin, Scale, SpriteEffects, Layer);
 		}
 	}
 }

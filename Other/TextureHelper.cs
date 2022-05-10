@@ -19,9 +19,9 @@ namespace Core
 			return new Vector2(texture.Width / 2f, texture.Height / 2f);
 		}
 
-		
 
 
+		public static Texture2D White64x { get; set; }
 		public static Texture2D SingleWhite { get; set; }
 
 		public static Texture2D Single(GraphicsDevice graphicsDevice, Color color)
@@ -36,9 +36,6 @@ namespace Core
 			oneByOne.SetData(new Color[] { Color.White });
 			return oneByOne;
 		}
-
-
-		
 
 
 		/*
