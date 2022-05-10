@@ -45,10 +45,17 @@ namespace Core.Components
 		public void CenterOrigin()
 		{
 			if(Sprite != null)
-				Origin = Sprite.Center();
+            {
+				if(RenderSettings != null)
+                {
+					Origin = RenderSettings.Origin;
+                }
+                else
+				{
+					Origin = Sprite.Center();
+				}
+			}
 		}
-
-
 
         protected override void Awake()
         {
