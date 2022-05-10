@@ -139,6 +139,39 @@ namespace Core
 
 		#region Components
 		// Non generic and generic implementations 
+		public Component AddComponent(Component componentToAdd)
+		{
+			if (componentToAdd == null)
+				return null;
+
+			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(componentToAdd.GetType());
+
+			if (attrs.OfType<DisallowMultipleComponent>().Any())
+			{
+				if (GetComponent(componentToAdd.GetType()) != null)
+				{
+					return null;
+				}
+			}
+
+			for (int i = 0; i < attrs.Length; i++)
+			{
+				if (attrs[i] is RequireComponent requireComponent)
+				{
+					Type comp = requireComponent.RequiedComponent;
+					if (comp == null)
+						continue;
+					if (GetComponent(comp) == null)
+						AddComponent(comp);
+				}
+			}
+
+			components.Add(componentToAdd);
+			componentToAdd.DoAwake(this, game, scene);
+			componentToAdd.DoStart();
+			OnComponentAdded?.Invoke(componentToAdd);
+			return componentToAdd;
+		}
 		public Component AddComponent(Type component)
 		{
 			if (component == null)
@@ -155,7 +188,6 @@ namespace Core
 					return null;
 				}
 			}
-
 
 			for (int i = 0; i < attrs.Length; i++)
 			{
@@ -207,6 +239,7 @@ namespace Core
 			OnComponentAdded?.Invoke(componentToAdd);
 			return componentToAdd;
 		}
+
 
 		public Component GetComponent(Type component)
 		{

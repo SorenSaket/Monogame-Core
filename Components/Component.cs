@@ -59,8 +59,10 @@ namespace Core.Components
 
 		#region Components
 		// Non generic and generic implementations 
-		public Component AddComponent(Type component) => Gameobject.GetComponent(component);
+		public Component AddComponent(Component component) => Gameobject.AddComponent(component);
+		public Component AddComponent(Type component) => Gameobject.AddComponent(component);
 		public T AddComponent<T>() where T : Component, new() => Gameobject.AddComponent<T>();
+
 		public Component GetComponent(Type component) => Gameobject.GetComponent(component);
 		public T GetComponent<T>() => Gameobject.GetComponent<T>();
 
