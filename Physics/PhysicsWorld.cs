@@ -33,7 +33,7 @@ namespace Core.Physics
 				}
 			}
         }
-
+		/*
         /// <summary>
         /// 
         /// </summary>
@@ -95,7 +95,7 @@ namespace Core.Physics
 				}
 			}
 			return false;
-		}
+		}*/
 
 		public List<Collider2D> OverlapAll(Collider2D collider)
 		{
@@ -118,7 +118,9 @@ namespace Core.Physics
 	{
 		public static bool Intersects(this Collider2D self, Collider2D other)
 		{
-			return self.Shape.Intersects(other.Shape);
+			if(self.Shape != null && other.Shape != null)
+				return self.Shape.Intersects(other.Shape);
+			return false;
 		}
 
 		public static bool Intersects(this Shape self, Shape other)
