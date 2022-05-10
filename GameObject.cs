@@ -139,38 +139,21 @@ namespace Core
 
 		#region Components
 		// Non generic and generic implementations 
-		public Component AddComponent(Component componentToAdd)
+		public Component AddComponent(Component component)
 		{
-			if (componentToAdd == null)
+			if (component == null)
 				return null;
 
-			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(componentToAdd.GetType());
+			if (!CanAddComponent(component.GetType()))
+                return null;
 
-			if (attrs.OfType<DisallowMultipleComponent>().Any())
-			{
-				if (GetComponent(componentToAdd.GetType()) != null)
-				{
-					return null;
-				}
-			}
+			EnsureRequireComponentAttributes(component.GetType());
 
-			for (int i = 0; i < attrs.Length; i++)
-			{
-				if (attrs[i] is RequireComponent requireComponent)
-				{
-					Type comp = requireComponent.RequiedComponent;
-					if (comp == null)
-						continue;
-					if (GetComponent(comp) == null)
-						AddComponent(comp);
-				}
-			}
-
-			components.Add(componentToAdd);
-			componentToAdd.DoAwake(this, game, scene);
-			componentToAdd.DoStart();
-			OnComponentAdded?.Invoke(componentToAdd);
-			return componentToAdd;
+			components.Add(component);
+			component.DoAwake(this, game, scene);
+			component.DoStart();
+			OnComponentAdded?.Invoke(component);
+			return component;
 		}
 		public Component AddComponent(Type component)
 		{
@@ -179,29 +162,9 @@ namespace Core
 			if(!component.IsSubclassOf( typeof(Component)))
 				throw new Exception("Type is not IsSubclassOf component");
 
-			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(component.GetType());
-
-			if(attrs.OfType<DisallowMultipleComponent>().Any())
-			{
-				if (GetComponent(component) != null)
-				{
-					return null;
-				}
-			}
-
-			for (int i = 0; i < attrs.Length; i++)
-			{
-				if (attrs[i] is RequireComponent requireComponent )
-				{
-					Type comp = requireComponent.RequiedComponent;
-					if (comp == null)
-						continue;
-					if (GetComponent(comp) == null)
-						AddComponent(comp);
-				}
-					
-				
-			}
+			if (!CanAddComponent(component))
+				return null;
+			EnsureRequireComponentAttributes(component);
 
 			Component componentToAdd = (Component)Activator.CreateInstance(component);
 			components.Add(componentToAdd);
@@ -212,25 +175,9 @@ namespace Core
 		}
 		public T AddComponent<T>() where T : Component, new()
 		{
-			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(typeof(T));
-
-			if (attrs.OfType<DisallowMultipleComponent>().Any())
-			{
-				if (GetComponent<T>() != null)
-				{
-					return null;
-				}
-			}
-			
-			for (int i = 0; i < attrs.Length; i++)
-			{
-				if (attrs[i] is RequireComponent requireComponent)
-				{
-					Type comp = requireComponent.RequiedComponent;
-					if (GetComponent(comp) == null)
-						AddComponent(comp);
-				}
-			}
+			if (!CanAddComponent(typeof(T)))
+				return null;
+			EnsureRequireComponentAttributes(typeof(T));
 
 			T componentToAdd = new T();
 			components.Add(componentToAdd);
@@ -248,7 +195,9 @@ namespace Core
 
 			for (int i = 0; i < components.Count; i++)
 			{
-				if (components[i]?.GetType() == component.GetType())
+				if (components[i] == null)
+					continue;
+				if (component.IsAssignableFrom(components[i].GetType()))
 					return components[i];
 			}
 			return null;
@@ -268,6 +217,40 @@ namespace Core
 			a = GetComponent<T>();
 			return a == null;
         }
+
+		private bool CanAddComponent(Type component)
+        {
+			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(component);
+
+			if (attrs.OfType<DisallowMultipleComponent>().Any())
+			{
+				if (GetComponent(component) != null)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		private void EnsureRequireComponentAttributes(Type component)
+        {
+			System.Attribute[] attrs = System.Attribute.GetCustomAttributes(component);
+
+			for (int i = 0; i < attrs.Length; i++)
+			{
+				// If the attribute is of type require component
+				if (attrs[i] is RequireComponent requireComponent)
+				{
+					// Get the type
+					Type comp = requireComponent.RequiedComponent;
+					// 
+					if (comp == null)
+						continue;
+					//
+					if (GetComponent(comp) == null)
+						AddComponent(comp);
+				}
+			}
+		}
 
 		#endregion
 
