@@ -58,6 +58,8 @@ namespace Core.Components
 		#endregion
 
 		#region Components
+		/// <inheritdoc cref="Core.Scene.Instantiate"/>
+		public GameObject Instantiate(GameObject obj) => Gameobject.Instantiate(obj);
 		// Non generic and generic implementations 
 		public Component AddComponent(Component component) => Gameobject.AddComponent(component);
 		public Component AddComponent(Type component) => Gameobject.AddComponent(component);
