@@ -13,6 +13,10 @@ namespace Core.Physics
             Shape = shape;
         }
 
+        public Collider2D()
+        {
+        }
+
         public Shape Shape { get; private set; }
 
 		public PhysicsWorld PhysicsWorld { get; set; }
