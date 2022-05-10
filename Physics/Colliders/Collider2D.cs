@@ -17,7 +17,7 @@ namespace Core.Physics
         {
         }
 
-        public Shape Shape { get; private set; }
+        public Shape Shape { get; set; }
 
 		public PhysicsWorld PhysicsWorld { get; set; }
 		
