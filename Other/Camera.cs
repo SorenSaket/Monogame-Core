@@ -37,7 +37,7 @@ namespace Core
             viewport = Game.GraphicsDevice.Viewport.Bounds.Size.ToVector2();
             if (shakeTimer > 0)
             {
-                internalOffset = Randoms.Velocity() * shakePower;
+                internalOffset = Randoms.Direction() * shakePower;
                 shakeTimer -= Time.DeltaTime;
             }
             else
