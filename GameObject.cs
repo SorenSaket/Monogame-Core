@@ -215,7 +215,7 @@ namespace Core
 		public bool TryGetComponent<T>(out T a)
         {
 			a = GetComponent<T>();
-			return a == null;
+			return a != null;
         }
 
 		private bool CanAddComponent(Type component)
