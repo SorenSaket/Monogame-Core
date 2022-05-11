@@ -49,8 +49,7 @@ namespace Core
 			for (int i = 0; i < frames.Length; i++)
 				frames[i] = new Rectangle(((startElement + i) % rows) * Width, (((startElement + i) / rows)) * Height, Width, Height);
 
-			// Compute origin as center 
-			// Todo make customizable
+			// Compute origin as center
 			this.origin = new Vector2(Width, Height) / 2f;
 		}
 	}

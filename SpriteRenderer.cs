@@ -22,22 +22,18 @@ namespace Core.Components
 		{
 			set
 			{
-				Scale = new Vector2(value/Sprite.Width);
+				Scale = new Vector2(value/SpriteSheet.Width);
 			}
 		}
 
-		/// <summary> Sprite </summary>
-		public Texture2D Sprite { get; set; }
 		/// <summary> Sheet Settings for using Spritesheets </summary>
-		public SpriteSheet SheetSettings { get; set; }
+		public SpriteSheet SpriteSheet { get; set; }
 		/// <summary> Color tint of sprite </summary>
 		public Color Color { get; set; } = Color.White;
-		/// <summary> Origin of the sprite relative to transform</summary>
+		/// <summary> R</summary>
 		public float Rotation { get; set; } = 0;
-		/// <summary> Origin of the sprite </summary>
-		public Vector2 Origin { get; set; }
-
-
+		/// <summary> Origin of the sprite relative to transform</summary>
+		public Vector2? Origin { get; set; } = null;
 		/// <summary> Scale of the Sprite </summary>
 		public Vector2 Scale { get; set; } = Vector2.One;
 		/// <summary> Scale of the Sprite </summary>
@@ -55,46 +51,35 @@ namespace Core.Components
 		private Transform transform;
 
 
-
-
 		public SpriteRenderer()
 		{
 			
 		}
 
-		/// <summary> Center the Origin</summary>
-		public void CenterOrigin()
-		{
-			if(Sprite != null)
-            {
-				if(SheetSettings != null)
-                {
-					Origin = SheetSettings.Origin;
-                }
-                else
-				{
-					Origin = Sprite.Center();
-				}
-			}
-		}
-
         protected override void Awake()
         {
 			transform = GetComponent<Transform>();
-			Sprite = TextureHelper.SingleWhite;
-			SheetSettings = new SpriteSheet(TextureHelper.White64x);
+			SpriteSheet = new SpriteSheet(TextureHelper.White64x);
 		}
 
         protected override void Update()
         {
 			// Animate
 			if (AnimationType == AnimationType.Anim)
-				ElementIndex = ((int)((Time.TotalTime * AnimationSpeed) % SheetSettings.Frames.Length));
+				ElementIndex = ((int)((Time.TotalTime * AnimationSpeed) % SpriteSheet.Frames.Length));
 		}
 
         protected override void Draw(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(Sprite, transform.Position, SheetSettings.Frames[ElementIndex], Color, transform.Rotation + Rotation, Origin, Scale, SpriteEffects, Layer);
+			spriteBatch.Draw(
+				SpriteSheet.Texture, 
+				transform.Position, 
+				SpriteSheet.Frames[ElementIndex], 
+				Color, 
+				transform.Rotation + Rotation, 
+				Origin ?? SpriteSheet.Origin, 
+				Scale * transform.Scale,
+				SpriteEffects, Layer);
 		}
 	}
 }
