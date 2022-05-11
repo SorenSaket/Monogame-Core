@@ -89,5 +89,22 @@ namespace Core
 
 			return total / count;
 		}
+
+
+		/// <summary>
+		/// AngleBetween - the angle between 2 vectors
+		/// </summary>
+		/// <returns>
+		/// Returns the the angle in degrees between vector1 and vector2
+		/// </returns>
+		/// <param name="vector1"> The first Vector </param>
+		/// <param name="vector2"> The second Vector </param>
+		public static float AngleBetween(this Vector2 vector1, Vector2 vector2)
+		{
+			float sin = vector1.X * vector2.Y - vector2.X * vector1.Y;
+			float cos = vector1.X * vector2.X + vector1.Y * vector2.Y;
+
+			return MathF.Atan2(sin, cos) * (180f / MathF.PI);
+		}
 	}
 }

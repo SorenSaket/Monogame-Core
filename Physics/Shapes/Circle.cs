@@ -13,6 +13,11 @@ namespace Core.Physics
 
 		private float radius;
 
+		public Circle(float positionX, float positionY, float radius)
+		{
+			this.radius = radius;
+			this.position = new Vector2(positionX,positionY);
+		}
 		public Circle(Vector2 position, float radius)
 		{
 			this.radius = radius;

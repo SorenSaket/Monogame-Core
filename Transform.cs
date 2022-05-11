@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Core.Components
 {
+	[DisallowMultipleComponent]
 	public class Transform : Component, IPositionable
 	{
 		public Vector2 Position { get; set; }

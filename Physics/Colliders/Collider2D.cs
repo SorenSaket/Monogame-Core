@@ -23,6 +23,9 @@ namespace Core.Physics
 		
 		public Transform Transform { get; private set; }
 
+		/// <summary>
+		/// Invoked Every frame another collider2D is within this collider
+		/// </summary>
 		public Action<Collider2D> OnCollision;
 
 		protected override void Awake()
@@ -35,5 +38,13 @@ namespace Core.Physics
 			if(Shape != null)
 				Shape.Position = Transform.Position;
         }
+
+
+		public List<Collider2D> OverlapAll()
+        {
+			return PhysicsWorld.OverlapAll(this);
+		}
+
+
 	}
 }
