@@ -47,9 +47,9 @@ namespace Core
 
 		public static float Range01()
 		{
-			return Range(0f, 1f);
+			return (float)rnd.NextDouble();
 		}
-		
+
 		public static float Rangeminus11()
 		{
 			return Range(-1f, 1f);
@@ -63,11 +63,6 @@ namespace Core
 		{
 			return Range(1f - var, 1f + var);
 		}
-
-		public static Vector2 Velocity()
-		{
-			return new Vector2(Range(-1f,1f), Range(-1f, 1f)).Normalized();
-		}
 		
 		/// <summary>
 		/// Returns a random normalized Vector2
@@ -75,7 +70,9 @@ namespace Core
 		/// <returns></returns>
 		public static Vector2 Direction()
 		{
-			return Velocity().Normalized();
+			float rot = Rotation();
+
+			return new Vector2(MathF.Cos(rot),MathF.Sin(rot));
 		}
 	}
 }
