@@ -33,7 +33,18 @@ namespace Core.Components
 		/// <summary> R</summary>
 		public float Rotation { get; set; } = 0;
 		/// <summary> Origin of the sprite relative to transform</summary>
-		public Vector2? Origin { get; set; } = null;
+		public Vector2 Origin { 
+			get {
+				return origin ?? SpriteSheet.Origin;
+			} 
+			set {
+				origin = value;
+			} 
+		}
+
+
+		private Vector2? origin = null;
+
 		/// <summary> Scale of the Sprite </summary>
 		public Vector2 Scale { get; set; } = Vector2.One;
 		/// <summary> Scale of the Sprite </summary>
@@ -77,7 +88,7 @@ namespace Core.Components
 				SpriteSheet.Frames[ElementIndex], 
 				Color, 
 				transform.Rotation + Rotation, 
-				Origin ?? SpriteSheet.Origin, 
+				Origin, 
 				Scale * transform.Scale,
 				SpriteEffects, Layer);
 		}
