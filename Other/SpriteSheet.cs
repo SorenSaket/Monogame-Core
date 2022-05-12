@@ -47,7 +47,12 @@ namespace Core
 
 			// Compute each Rectangle/Frame
 			for (int i = 0; i < frames.Length; i++)
-				frames[i] = new Rectangle(((startElement + i) % rows) * Width, (((startElement + i) / rows)) * Height, Width, Height);
+            {
+				int x = ((startElement + i) % columns);
+				int y = (((startElement + i) / columns));
+				frames[i] = new Rectangle( x * Width, y * Height, Width, Height);
+			}
+				
 
 			// Compute origin as center
 			this.origin = new Vector2(Width, Height) / 2f;
