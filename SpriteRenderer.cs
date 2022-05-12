@@ -28,6 +28,9 @@ namespace Core.Components
 
 		/// <summary> Sheet Settings for using Spritesheets </summary>
 		public SpriteSheet SpriteSheet { get; set; }
+
+		/// <summary> Offset position from transform </summary>
+		public Vector2 Position { get; set; } = Vector2.Zero;
 		/// <summary> Color tint of sprite </summary>
 		public Color Color { get; set; } = Color.White;
 		/// <summary> R</summary>
@@ -84,7 +87,7 @@ namespace Core.Components
 		{
 			spriteBatch.Draw(
 				SpriteSheet.Texture, 
-				transform.Position, 
+				transform.Position+ Position, 
 				SpriteSheet.Frames[ElementIndex], 
 				Color, 
 				transform.Rotation + Rotation, 
