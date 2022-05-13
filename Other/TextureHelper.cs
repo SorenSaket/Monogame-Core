@@ -23,7 +23,19 @@ namespace Core
 
 		public static Texture2D White64x { get; set; }
 		public static Texture2D SingleWhite { get; set; }
+		public static Texture2D Tex(GraphicsDevice graphicsDevice, Color color, int width = 1, int height = 1)
+		{
+			Texture2D Texture = new Texture2D(graphicsDevice, width, height);
 
+			Color[] data = new Color[width * height];
+            for (int i = 0; i < data.Length; i++)
+            {
+				data[i] = color;
+			}
+
+			Texture.SetData(data);
+			return Texture;
+		}
 		public static Texture2D Single(GraphicsDevice graphicsDevice, Color color)
 		{
 			Texture2D oneByOne = new Texture2D(graphicsDevice, 1, 1);
