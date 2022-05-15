@@ -16,6 +16,13 @@ namespace Core.Components
 		public Scene Scene { get; private set; }
 
 
+		public void SetActive(bool active)
+        {
+			ActiveSelf = active;
+        }
+
+
+
 		#region Lifetime
 		/// <summary>
 		/// Called when the object is created

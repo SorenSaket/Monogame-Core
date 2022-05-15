@@ -24,7 +24,7 @@ namespace Core
 		/// <summary>
 		/// Returns true if the object is active and not destroyed
 		/// </summary>
-		public bool Active => active && !destroyed;
+		public bool Active => activeSelf && !destroyed;
 		/// <summary>
 		/// Returns true if the object is destroyed
 		/// </summary>
@@ -33,7 +33,7 @@ namespace Core
 		protected Game Game => game; 
 		protected Scene Scene => scene; 
 
-		private bool active = true;
+		private bool activeSelf = true;
 		private bool destroyed = false;
 		private Game game;
 		private Scene scene;
@@ -280,7 +280,7 @@ namespace Core
 		public void SetActive(bool value)
 		{
 			bool lastState = Active;
-			active = value;
+			activeSelf = value;
 			if (lastState != Active)
 				OnActiveStateChanged(Active);
 		}
@@ -297,7 +297,7 @@ namespace Core
 		public void ResetInternalState()
 		{
 			destroyed = false;
-			active = true;
+			activeSelf = true;
 			OnActiveStateChanged(true);
 		}
 
@@ -327,7 +327,7 @@ namespace Core
 		{
 			game = obj.game;
 			scene = obj.scene;
-			active = obj.active;
+			activeSelf = obj.activeSelf;
 			destroyed = obj.destroyed;
 			// todo implement component cloning
 		}
@@ -337,7 +337,7 @@ namespace Core
 			{
 				game = game,
 				scene = scene,
-				active = active,
+				activeSelf = activeSelf,
 				destroyed = destroyed
 			};
 			return obj;
