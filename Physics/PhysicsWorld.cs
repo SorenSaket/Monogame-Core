@@ -26,6 +26,8 @@ namespace Core.Physics
         {
             for (int i = 0; i < collidables.Count; i++)
             {
+				if (!collidables[i].Active)
+					continue;
 				var collisions = OverlapAll(collidables[i]);
                 for (int y = 0; y < collisions.Count; y++)
                 {
