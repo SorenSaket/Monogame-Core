@@ -74,6 +74,7 @@ namespace Core.Components
 
 		public Component GetComponent(Type component) => Gameobject.GetComponent(component);
 		public T GetComponent<T>() => Gameobject.GetComponent<T>();
+		public List<T> GetComponents<T>() => Gameobject.GetComponents<T>();
 
 		public bool TryGetComponent<T>(out T component) => Gameobject.TryGetComponent(out component); 
 		#endregion

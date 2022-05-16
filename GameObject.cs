@@ -211,6 +211,17 @@ namespace Core
             }
 			return default(T);
 		}
+		public List<T> GetComponents<T>()
+		{
+			List<T> r = new List<T>();
+			for (int i = 0; i < components.Count; i++)
+			{
+				if (components[i] is T t)
+					r.Add(t);
+			}
+			return r;
+		}
+
 
 		public bool TryGetComponent<T>(out T a)
         {
