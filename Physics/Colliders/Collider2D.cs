@@ -36,7 +36,7 @@ namespace Core.Physics
         protected override void EarlyUpdate()
         {
 			if(Shape != null)
-				Shape.Position = Transform.Position;
+				Shape.Position = Transform.LocalPosition;
         }
 
 

@@ -12,17 +12,17 @@ namespace Core.Physics
         public float Friction { get; set; } = 0.95f;
 		public Vector2 Velocity { get; set; }
 
-        private Transform transform;
+        public Transform Transform { get; private set; }
 
         protected override void Awake()
         {
-            transform = GetComponent<Transform>();
+            Transform = GetComponent<Transform>();
         }
 
         protected override void Update()
         {
             Velocity *= Friction;
-            transform.Position += Velocity;
+            Transform.LocalPosition += Velocity;
         }
     }
 }

@@ -87,7 +87,7 @@ namespace Core.Components
 		{
 			spriteBatch.Draw(
 				SpriteSheet.Texture, 
-				transform.Position+ Position, 
+				transform.Position + Position, 
 				SpriteSheet.Frames[ElementIndex], 
 				Color, 
 				transform.Rotation + Rotation, 

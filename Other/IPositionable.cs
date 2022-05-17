@@ -7,6 +7,6 @@ namespace Core
 {
 	public interface IPositionable
 	{
-		public Vector2 Position { get; set; }
+		public Vector2 LocalPosition { get; set; }
 	}
 }
