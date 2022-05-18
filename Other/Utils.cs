@@ -24,5 +24,10 @@ namespace Core
 			}
 			return r;
 		}
+
+		public static Microsoft.Xna.Framework.Color ToXNAColor(System.Drawing.Color c)
+        {
+			return new Microsoft.Xna.Framework.Color(c.R,c.G,c.B,c.A);
+        }
 	}
 }
