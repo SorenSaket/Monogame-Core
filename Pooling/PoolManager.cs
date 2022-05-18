@@ -39,7 +39,6 @@ namespace Core.Pooling
         /// <param name="poolID"></param>
         /// <param name="factory"></param>
         /// <returns>The registered pool</returns>
-       
         public Pool RegisterPool(string poolID, FactoryFunction factory)
         {
             if (!pools.ContainsKey(poolID))
@@ -49,7 +48,11 @@ namespace Core.Pooling
                 return p;
             }
             else
+            {
+                // Overwrite Pool
+                pools[poolID] = new Pool(factory);
                 return pools[poolID];
+            }
         }
 
         /// <summary>
