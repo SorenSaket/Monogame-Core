@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Core.Math;
 
 namespace Core.Physics
 {
 	public class PhysicsWorld : GameObject
 	{
+		public const float gridSize = 256;
+		private KeyedHashSet<int2, Collider2D> grid;
+		private KeyedHashSet<Collider2D, int2> collidablesCells;
+
 		public List<Collider2D> collidables;
 
 		protected override void Awake()
 		{
+			collidablesCells = new KeyedHashSet<Collider2D, int2>();
+			grid = new KeyedHashSet<int2, Collider2D>();
 			collidables = new List<Collider2D>();
 			Scene.OnGameObjectInstantiated += (o) => { o.OnComponentAdded += (c) => {
 				// On New Component Added
@@ -22,19 +29,82 @@ namespace Core.Physics
 		}
 
 
-        protected override void Update()
+        protected override void EarlyUpdate()
         {
-            for (int i = 0; i < collidables.Count; i++)
+			BroadPhase();
+			NarrowPhase();
+		}
+
+		protected void BroadPhase()
+        {
+            // Clear Grid
+            foreach (var item in grid)
             {
+				item.Value.Clear();
+            }
+			foreach (var item in collidablesCells)
+			{
+				item.Value.Clear();
+			}
+
+			for (int i = 0; i < collidables.Count; i++)
+			{
+				if (!collidables[i].Active)
+					continue;
+				if (collidables[i].Shape == null)
+					continue;
+
+				Vector2 AABB = collidables[i].Shape.AABB();
+
+				int2 min = new int2(
+					(int)((collidables[i].Shape.Position.X - AABB.X) / gridSize),
+					(int)((collidables[i].Shape.Position.Y - AABB.Y) / gridSize)
+					);
+				int2 max = new int2(
+					(int)MathF.Ceiling((collidables[i].Shape.Position.X + AABB.X)/gridSize), 
+					(int)MathF.Ceiling((collidables[i].Shape.Position.Y + AABB.Y) / gridSize)
+					);
+
+                for (int x = min.X; x < max.X; x++)
+                {
+                    for (int y = min.Y; y < max.Y; y++)
+                    {
+						int2 key = new int2(x, y);
+						if (!grid.ContainsKey(key))
+						{
+							var hashset = new HashSet<Collider2D>();
+							hashset.Add(collidables[i]);
+							grid.Add(key, hashset);
+						}
+						else
+							grid[key].Add(collidables[i]);
+
+						if (!collidablesCells.ContainsKey(collidables[i]))
+						{
+							var cells = new HashSet<int2>();
+							cells.Add(key);
+							collidablesCells.Add(collidables[i], cells);
+						}
+						else
+							collidablesCells[collidables[i]].Add(key);
+					}
+                }
+			}
+		}
+		protected void NarrowPhase()
+        {
+			for (int i = 0; i < collidables.Count; i++)
+			{
 				if (!collidables[i].Active)
 					continue;
 				var collisions = OverlapAll(collidables[i]);
-                for (int y = 0; y < collisions.Count; y++)
+                foreach (var item in collisions)
                 {
-					collidables[i].OnCollision?.Invoke((collisions[y]));
+					collidables[i].OnCollision?.Invoke(item);
 				}
 			}
-        }
+		}
+
 		/*
         /// <summary>
         /// 
@@ -99,19 +169,27 @@ namespace Core.Physics
 			return false;
 		}*/
 
-		public List<Collider2D> OverlapAll(Collider2D collider)
+		public HashSet<Collider2D> OverlapAll(Collider2D collider)
 		{
-			List<Collider2D> c = new List<Collider2D>();
+			HashSet<Collider2D> c = new HashSet<Collider2D>();
 
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (!collidables[i].Active)
-					continue;
-				if (collidables[i] == collider)
-					continue;
-				if (Collision.Intersects(collider, collidables[i]))
-					c.Add(collidables[i]);
+            if (collidablesCells.ContainsKey(collider))
+            {
+				foreach (var cell in collidablesCells[collider])
+				{
+					foreach (var item in grid[cell])
+					{
+						if (!item.Active)
+							continue;
+						if (item == collider)
+							continue;
+
+						if (Collision.Intersects(collider, item))
+							c.Add(item);
+					}
+				}
 			}
+
 			return c;
 		}
 	}

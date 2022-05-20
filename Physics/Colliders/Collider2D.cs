@@ -40,9 +40,12 @@ namespace Core.Physics
         }
 
 
-		public List<Collider2D> OverlapAll()
+		public Collider2D[] OverlapAll()
         {
-			return PhysicsWorld.OverlapAll(this);
+			var a = PhysicsWorld.OverlapAll(this);
+			var r = new Collider2D[a.Count];
+			a.CopyTo(r);
+			return  r;
 		}
 
 
