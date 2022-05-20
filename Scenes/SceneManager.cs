@@ -21,6 +21,10 @@ namespace Core
 
 		public void LoadScene(Scene scene)
 		{
+			if(current != null)
+            {
+				current.Unload();
+            }
 			current = scene;
 			scene.Load(game);
 		}

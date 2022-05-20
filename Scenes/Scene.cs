@@ -29,7 +29,11 @@ namespace Core
 			gameObjects = new List<GameObject>();
 			OnSceneLoaded();
 		}
-		
+		public void Unload()
+		{
+			OnSceneUnLoaded();
+		}
+
 		/// <summary>
 		/// Add Object to the scene
 		/// </summary>
@@ -113,6 +117,9 @@ namespace Core
 		/// Called when the scene is loaded
 		/// </summary>
 		protected virtual void OnSceneLoaded() { }
+
+		protected virtual void OnSceneUnLoaded() { }
+
 		/// <summary>
 		/// Called every frame
 		/// </summary>
