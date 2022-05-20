@@ -46,7 +46,7 @@ namespace Core
                 }
                 if(!internalStates[i].CurrentState.IsConnected && internalStates[i].PreviousState.IsConnected)
                 {
-                    OnControllerConnected?.Invoke(i);
+                    OnControllerDisconnected?.Invoke(i);
                 }
             }
         }
