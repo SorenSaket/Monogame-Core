@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Core.Math;
+using System.Linq;
 
 namespace Core.Physics
 {
@@ -93,16 +94,17 @@ namespace Core.Physics
 		}
 		protected void NarrowPhase()
         {
-			for (int i = 0; i < collidables.Count; i++)
+			// Kør med vilkårlig parallelitet
+			collidables.AsParallel().ForAll((Collider) =>
 			{
-				if (!collidables[i].Active)
-					continue;
-				var collisions = OverlapAll(collidables[i]);
-                foreach (var item in collisions)
-                {
-					collidables[i].OnCollision?.Invoke(item);
+				if (!Collider.Active)
+					return;
+				var collisions = OverlapAll(Collider);
+				foreach (var item in collisions)
+				{
+					Collider.OnCollision?.Invoke(item);
 				}
-			}
+			});
 		}
 
 		/*
