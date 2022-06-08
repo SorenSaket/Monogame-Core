@@ -3,17 +3,28 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Core.Math;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Core.Physics
 {
+	/// <summary>
+	/// Handles collisions between objects. Does not contain any real physics (yet)
+	/// </summary>
 	public class PhysicsWorld : GameObject
 	{
+		// TODO Make Customizable
 		public const float gridSize = 256;
+
+		/// <summary> Which colliders are in cell </summary>
 		private KeyedHashSet<int2, Collider2D> grid;
+
+		/// <summary> Which cells are occupied by colliders </summary>
 		private KeyedHashSet<Collider2D, int2> collidablesCells;
+		
+		/// <summary> List of all colliders  </summary>
+		private List<Collider2D> collidables;
 
-		public List<Collider2D> collidables;
-
+		// Initialize Data structures and subscribe to OnGameObjectInstantiated to keep collidables up to date
 		protected override void Awake()
 		{
 			collidablesCells = new KeyedHashSet<Collider2D, int2>();
@@ -29,13 +40,19 @@ namespace Core.Physics
 			};};
 		}
 
-
+		/// <summary>
+		/// 
+		/// </summary>
         protected override void EarlyUpdate()
         {
+			// The broad phase but be run first
 			BroadPhase();
 			NarrowPhase();
 		}
-
+		
+		/// <summary>
+		/// Maintians the Spatial Hash up to date
+		/// </summary>
 		protected void BroadPhase()
         {
             // Clear Grid
@@ -92,10 +109,13 @@ namespace Core.Physics
                 }
 			}
 		}
+		/// <summary>
+		/// Perform Collision check and OnCollision Invocations
+		/// </summary>
 		protected void NarrowPhase()
         {
 			// Kør med vilkårlig parallelitet
-			collidables.AsParallel().ForAll((Collider) =>
+			Parallel.ForEach(collidables, (Collider) =>
 			{
 				if (!Collider.Active)
 					return;
@@ -107,70 +127,11 @@ namespace Core.Physics
 			});
 		}
 
-		/*
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public List<Collider2D> OverlapPointAll(Vector2 point)
-		{
-			List<Collider2D> c = new List<Collider2D>();
-
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (!collidables[i].Active)
-					continue;
-
-				if (collidables[i].Shape.Contains(point))
-					c.Add(collidables[i]);
-			}
-			return c;
-		}
-		public Collider2D OverlapPoint(Vector2 point)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (!collidables[i].Active)
-					continue;
-
-				if (collidables[i].Shape.Contains(point))
-					return collidables[i];
-			}
-			return null;
-		}
-		public bool IsOverlapPoint(Vector2 point, out Collider2D collidable)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (!collidables[i].Active)
-					continue;
-				if (collidables[i].Shape.Contains(point))
-				{
-					collidable = collidables[i];
-					return true;
-				}
-			}
-			collidable = null;
-			return false;
-		}
 		/// <summary>
-		/// Checks if point is within any <see cref="ICollidable"/>  
+		/// 
 		/// </summary>
-		/// <param name="point">The point</param>
+		/// <param name="collider"></param>
 		/// <returns></returns>
-		public bool IsOverlapPoint(Vector2 point)
-		{
-			for (int i = 0; i < collidables.Count; i++)
-			{
-				if (collidables[i].Shape.Contains(point))
-				{
-					return true;
-				}
-			}
-			return false;
-		}*/
-
 		public HashSet<Collider2D> OverlapAll(Collider2D collider)
 		{
 			HashSet<Collider2D> c = new HashSet<Collider2D>();
@@ -181,11 +142,12 @@ namespace Core.Physics
 				{
 					foreach (var item in grid[cell])
 					{
-						if (!item.Active)
+						if (c.Contains(item))
 							continue;
 						if (item == collider)
 							continue;
-
+						if (!item.Active)
+							continue;
 						if (Collision.Intersects(collider, item))
 							c.Add(item);
 					}
@@ -196,6 +158,9 @@ namespace Core.Physics
 		}
 	}
 
+	/// <summary>
+	/// Helper class to perform intersection tests between shapes
+	/// </summary>
 	public static class Collision
 	{
 		public static bool Intersects(this Collider2D self, Collider2D other)
