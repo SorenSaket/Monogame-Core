@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Core.Components
 {
-	public class Component
+	public abstract class Component
 	{
 		public bool ActiveSelf { get; set; } = true;
 		public bool Active => ActiveSelf && Gameobject.Active;
